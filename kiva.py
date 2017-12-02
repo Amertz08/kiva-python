@@ -21,14 +21,14 @@ def recent_lending_actions():
     return __make_call('lending_actions/recent.json', 'lending_actions')
 
 
-def lender_info(*lender_ids):
+def lender_info(lender_ids):
     # need one lender, can have up to 50
     if len(lender_ids) == 0:
         raise Exception('Must have at least 1 lender id')
     elif len(lender_ids) > 50:
         raise Exception(f'Can have up to 50 lender ids; {len(lender_ids)} submitted')
 
-    lids = ','.join(lender_ids)
+    lids = ','.join([str(i) for i in lender_ids])
 
     return __make_call(f'lenders/{lids}.json', 'lenders')
 
@@ -45,29 +45,34 @@ def lender_loans(lender_id, page=1):
 
 
 def newest_loans(page=1):
-    return __make_call('loans/newest.json?page=%i' % page, 'loans', newest_loans)
+    return __make_call('loans/newest.json', 'loans', newest_loans, params={'page': page})
 
 
-def loans(*loan_ids):
+def loans(loan_ids):
     if len(loan_ids) == 0 or len(loan_ids) > 10:
         raise Exception('You can request between 1 and 10 loans')
-    lids = ','.join(map(lambda x: str(x), loan_ids))
+    lids = ','.join([str(i) for i in loan_ids])
+
     return __make_call(f'loans/{lids}.json', 'loans')
 
 
 def lenders(loan_id, page=1):
-    return __make_call(f'loans/{loan_id}/lenders.json?page={page}', 'lenders', lenders, [loan_id])
+    return __make_call(f'loans/{loan_id}/lenders.json', 'lenders', lenders, [loan_id], {'page': page})
 
 
 def journal_entries(loan_id, include_bulk=True, page=1):
     ib = include_bulk and 1 or 0
-    return __make_call(f'loans/{loan_id}/journal_entries.json?page={page}&include_bulk={ib}',
-                       'journal_entries', journal_entries, [loan_id, include_bulk])
+    params = {
+        'page': page,
+        'include_bulk': ib
+    }
+    return __make_call(f'loans/{loan_id}/journal_entries.json',
+                       'journal_entries', journal_entries, [loan_id, include_bulk], params)
 
 
 def entry_comments(entry_id, page=1):
-    return __make_call(f'journal_entries/{entry_id}/comments.json?page={page}', 'comments',
-                       entry_comments, [entry_id])
+    return __make_call(f'journal_entries/{entry_id}/comments.json', 'comments',
+                       entry_comments, [entry_id], {'page': page})
 
 
 def search_loans(status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
