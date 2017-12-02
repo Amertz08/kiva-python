@@ -10,15 +10,15 @@ class KivaAPI(BaseAPI):
 
     @property
     def lenders(self):
-        return Lenders(self.version)
+        return Lenders(self.app_id, self.version)
 
     @property
     def lending_actions(self):
-        return LendingActions(self.version)
+        return LendingActions(self.app_id, self.version)
 
     @property
     def loans(self):
-        return Loans(self.version)
+        return Loans(self.app_id, self.version)
 
     @property
     def methods(self):

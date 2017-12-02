@@ -14,7 +14,8 @@ SEARCH_SORT = ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'a
 
 class BaseAPI(object):
 
-    def __init__(self, version=1):
+    def __init__(self, app_id=None, version=1):
+        self.app_id = app_id
         self.version = version
         self.base_url = f'https://api.kivaws.org/v{self.version}/'
 
@@ -42,6 +43,11 @@ class BaseAPI(object):
     def _make_call(self, url, key=None, method=None, args=None, params=None):
         if args is None:
             args = []
+
+        if params is None:
+            params = {}
+
+        params['app_id'] = self.app_id
 
         resp = requests.get(self.base_url + url, params=params)
         if resp.status_code != 200:
