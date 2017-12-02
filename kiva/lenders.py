@@ -25,8 +25,8 @@ class Lenders(BaseAPI):
         params = {'page': page}
         return self._make_call(
             url=f'{lender_id}/loans.json',
+            params=params
             key='loans',
             method=self.loans,
             args=[lender_id],
-            params=params
         )

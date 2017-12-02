@@ -24,19 +24,19 @@ class Loans(BaseAPI):
         }
         return self._make_call(
             url=f'{loan_id}/journal_entries.json',
+            params=params
             key='journal_entries',
             method=self.journal_entries,
             args=[loan_id, include_bulk],
-            params=params
         )
 
     def lenders(self, loan_id, page=1):
         return self._make_call(
             url=f'{loan_id}/lenders.json',
+            params={'page': page}
             key='lenders',
             method=self.lenders,
             args=[loan_id],
-            params={'page': page}
         )
 
     def newest(self, page=1):
@@ -86,8 +86,8 @@ class Loans(BaseAPI):
             del qopts[k]
         return self._make_call(
             url='search.json',
+            params=qopts
             key='loans',
             method=self.search,
             args=opts,
-            params=qopts
         )
