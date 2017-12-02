@@ -163,30 +163,30 @@ def __make_call(url, key=None, method=None, args=None, params=None):
         obj.total_pages = total
         obj.page_size = raw['paging']['page_size']
         obj.total_count = raw['paging']['total']
-        obj.next_page = current < total and current +1 or None
+        obj.next_page = current < total and current + 1 or None
         obj.prev_page = current > 1 and current - 1 or None
 
         if method:
             if obj.next_page:
                 if isinstance(args, list):
-                    qargs = args+[obj.next_page]
-                    obj.getNextPage = lambda: method(*qargs)
+                    qargs = args + [obj.next_page]
+                    obj.get_next_page = lambda: method(*qargs)
                 else:
                     args['page'] = obj.next_page
-                    obj.getNextPage = lambda: method(**args)
+                    obj.get_next_page = lambda: method(**args)
             else:
-                obj.getNextPage = lambda: None
+                obj.get_next_page = lambda: None
 
             if obj.prev_page:
                 if isinstance(args, list):
-                    qargs = args+[obj.prev_page]
-                    obj.getPreviousPage = lambda: method(*qargs)
+                    qargs = args + [obj.prev_page]
+                    obj.get_previous_page = lambda: method(*qargs)
                 else:
                     args['page'] = obj.prev_page
-                    obj.getPreviousPage = lambda: method(**args)
+                    obj.get_previous_page = lambda: method(**args)
 
             else:
-                obj.getPreviousPage = lambda: None
+                obj.get_previous_page = lambda: None
     
     return obj
 
