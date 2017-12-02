@@ -138,9 +138,7 @@ def __make_call(url, key=None, method=None, args=None):
     u.close()
 
     data = key and raw[key] or raw
-        
-    obj = None
-    if isinstance(obj, list):
+    if isinstance(data, list):
         obj = KivaList()
         for tmp in data:
             spam = KivaContainer(tmp)
