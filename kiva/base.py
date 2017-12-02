@@ -40,7 +40,7 @@ class BaseAPI(object):
             raise Exception(f'Invalid {name}: {", ".join(bogus)}. Must be one of {", ".join(allowed)}')
         return value
 
-    def _make_call(self, url, key=None, method=None, args=None, params=None):
+    def _make_call(self, url, params=None, key=None, method=None, args=None):
         if args is None:
             args = []
 

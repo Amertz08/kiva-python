@@ -16,7 +16,10 @@ class Lenders(BaseAPI):
 
         lids = ','.join([str(i) for i in lender_ids])
 
-        return self._make_call(f'{lids}.json', 'lenders')
+        return self._make_call(
+            url=f'{lids}.json',
+            key='lenders'
+        )
 
     def loans(self, lender_id, page=1):
         params = {'page': page}
