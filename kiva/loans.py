@@ -3,11 +3,15 @@ from .base import BaseAPI, SEARCH_GENDER, SEARCH_REGION, SEARCH_SORT, SEARCH_STA
 
 class Loans(BaseAPI):
 
+    def __init__(self, *args, **kwargs):
+        super(Loans, self).__init__(*args, **kwargs)
+        self.base_url += 'loans/'
+
     def __call__(self, loan_ids):
         if len(loan_ids) == 0 or len(loan_ids) > 10:
             raise Exception('You can request between 1 and 10 loans')
         lids = ','.join([str(i) for i in loan_ids])
-        return self._make_call(f'loans/{lids}.json', 'loans')
+        return self._make_call(f'{lids}.json', 'loans')
 
     def journal_entries(self, loan_id, include_bulk=True, page=1):
         ib = include_bulk and 1 or 0
@@ -15,14 +19,14 @@ class Loans(BaseAPI):
             'page': page,
             'include_bulk': ib
         }
-        return self._make_call(f'loans/{loan_id}/journal_entries.json', 'journal_entries', self.journal_entries,
+        return self._make_call(f'{loan_id}/journal_entries.json', 'journal_entries', self.journal_entries,
                                [loan_id, include_bulk], params)
 
     def lenders(self, loan_id, page=1):
-        return self._make_call(f'loans/{loan_id}/lenders.json', 'lenders', self.lenders, [loan_id], {'page': page})
+        return self._make_call(f'{loan_id}/lenders.json', 'lenders', self.lenders, [loan_id], {'page': page})
 
     def newest(self, page=1):
-        return self._make_call('loans/newest.json', 'loans', self.newest, params={'page': page})
+        return self._make_call('newest.json', 'loans', self.newest, params={'page': page})
 
     def search(self, status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
                sort_by=None, page=1):
@@ -61,6 +65,5 @@ class Loans(BaseAPI):
 
         for k in filter(lambda x: qopts[x] == '', qopts):
             del qopts[k]
-        url = 'loans/search.json'
-        return self._make_call(url, 'loans', self.search, opts, qopts)
+        return self._make_call('search.json', 'loans', self.search, opts, qopts)
 

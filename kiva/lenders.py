@@ -3,6 +3,10 @@ from .base import BaseAPI
 
 class Lenders(BaseAPI):
 
+    def __init__(self, *args, **kwargs):
+        super(Lenders, self).__init__(*args, **kwargs)
+        self.base_url += 'lenders/'
+
     def __call__(self, lender_ids):
         # need one lender, can have up to 50
         if len(lender_ids) == 0:
@@ -12,12 +16,12 @@ class Lenders(BaseAPI):
 
         lids = ','.join([str(i) for i in lender_ids])
 
-        return self._make_call(f'lenders/{lids}.json', 'lenders')
+        return self._make_call(f'{lids}.json', 'lenders')
 
     def loans(self, lender_id, page=1):
         params = {'page': page}
         return self._make_call(
-            url=f'lenders/{lender_id}/loans.json',
+            url=f'{lender_id}/loans.json',
             key='loans',
             method=self.loans,
             args=[lender_id],
