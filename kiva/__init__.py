@@ -1,4 +1,4 @@
-from .base import BaseAPI
+from .base import BaseAPI, KivaContainer, KivaList
 from .lenders import Lenders
 from .lending_actions import LendingActions
 from .loans import Loans
