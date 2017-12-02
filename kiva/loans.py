@@ -1,4 +1,4 @@
-from .base import BaseAPI
+from .base import BaseAPI, SEARCH_GENDER, SEARCH_REGION, SEARCH_SORT, SEARCH_STATUS
 
 
 class Loans(BaseAPI):
@@ -23,4 +23,44 @@ class Loans(BaseAPI):
 
     def newest(self, page=1):
         return self._make_call('loans/newest.json', 'loans', self.newest, params={'page': page})
+
+    def search(self, status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
+               sort_by=None, page=1):
+        opts = {
+            'status': status,
+            'gender': gender,
+            'sector': sector,
+            'region': region,
+            'country_code': country_code,
+            'partner': partner,
+            'q': q,
+            'sort_by': sort_by
+        }
+
+        # check params
+        status = self._check_param(status, 'status', SEARCH_STATUS)
+        gender = self._check_param(gender, 'gender', SEARCH_GENDER)
+        sector = self._check_param(sector, 'sector')
+        region = self._check_param(region, 'region', SEARCH_REGION)
+        country_code = self._check_param(country_code, 'country code')
+        partner = self._check_param(partner, 'partner')
+        q = self._check_param(q, 'search string', single=True)
+        sort_by = self._check_param(sort_by, 'sort_by', SEARCH_SORT, True)
+
+        qopts = {
+            'status': status,
+            'gender': gender,
+            'sector': sector,
+            'region': region,
+            'country_code': country_code,
+            'partner': partner,
+            'q': q,
+            'sort_by': sort_by,
+            'page': page
+        }
+
+        for k in filter(lambda x: qopts[x] == '', qopts):
+            del qopts[k]
+        url = 'loans/search.json'
+        return self._make_call(url, 'loans', self.search, opts, qopts)
 
