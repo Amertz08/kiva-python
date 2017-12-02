@@ -40,22 +40,9 @@ class BaseAPI(object):
             raise Exception(f'Invalid {name}: {", ".join(bogus)}. Must be one of {", ".join(allowed)}')
         return value
 
-    def _make_call(self, url, params=None, key=None, method=None, args=None):
-        if args is None:
-            args = []
-
-        if params is None:
-            params = {}
-
-        if self.app_id:
-            params['app_id'] = self.app_id
-
-        resp = requests.get(self.base_url + url, params=params)
-        if resp.status_code != 200:
-            raise requests.HTTPError(f'Non 200 code {resp.status_code} {resp.json()}')
-        raw = resp.json()
-
-        data = key and raw[key] or raw
+    @staticmethod
+    def _process_response(resp, key):
+        data = key and resp[key] or resp
         if isinstance(data, list):
             obj = KivaList()
             for tmp in data:
@@ -64,13 +51,13 @@ class BaseAPI(object):
         else:
             obj = KivaContainer(data)
 
-        if 'paging' in raw.keys():
-            page = raw['paging']['page']
-            total = raw['paging']['pages']
+        if 'paging' in resp.keys():
+            page = resp['paging']['page']
+            total = resp['paging']['pages']
             obj.page = page
             obj.total_pages = total
-            obj.page_size = raw['paging']['page_size']
-            obj.total_count = raw['paging']['total']
+            obj.page_size = resp['paging']['page_size']
+            obj.total_count = resp['paging']['total']
             obj.next_page = page < total and page + 1 or None
             obj.prev_page = page > 1 and page - 1 or None
 
@@ -96,6 +83,23 @@ class BaseAPI(object):
                 else:
                     obj.get_previous_page = lambda: None
         return obj
+
+    def _make_call(self, url, params=None, key=None, method=None, args=None):
+        if args is None:
+            args = []
+
+        if params is None:
+            params = {}
+
+        if self.app_id:
+            params['app_id'] = self.app_id
+
+        resp = requests.get(self.base_url + url, params=params)
+        if resp.status_code != 200:
+            raise requests.HTTPError(f'Non 200 code {resp.status_code} {resp.json()}')
+        resp = resp.json()
+        return self._process_response(resp, key)
+
 
 
 class KivaContainer(object):
