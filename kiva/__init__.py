@@ -1,4 +1,5 @@
 from .base import BaseAPI
+from .lending_actions import LendingActions
 
 __version__ = 0.1
 
@@ -11,7 +12,7 @@ class KivaAPI(BaseAPI):
 
     @property
     def lending_actions(self):
-        return ''
+        return LendingActions()
 
     @property
     def loans(self):
@@ -36,9 +37,6 @@ class KivaAPI(BaseAPI):
     @property
     def templates(self):
         return ''
-
-def recent_lending_actions():
-    return __make_call('lending_actions/recent.json', 'lending_actions')
 
 
 def lender_info(lender_ids):
