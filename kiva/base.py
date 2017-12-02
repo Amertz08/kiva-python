@@ -12,7 +12,7 @@ SEARCH_REGION = ['na', 'ca', 'sa', 'af', 'as', 'me', 'ee']
 SEARCH_SORT = ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'amount_remaining', 'repayment_term']
 
 
-class KivaAPI(object):
+class BaseAPI(object):
 
     def __init__(self, version=1):
         self.version = version
