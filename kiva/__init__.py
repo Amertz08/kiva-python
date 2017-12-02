@@ -1,21 +1,41 @@
-import re
-import requests
-
-from datetime import datetime
+from .base import BaseAPI
 
 __version__ = 0.1
 
-API_VERSION = 1
 
-RE_DATE = re.compile('.*_?date$')
-BASE_URL = 'https://api.kivaws.org/v%i/' % API_VERSION
-FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+class KivaAPI(BaseAPI):
 
-SEARCH_STATUS = ['fundraising', 'funded', 'in_repayment', 'paid', 'defaulted']
-SEARCH_GENDER = ['male', 'female']
-SEARCH_REGION = ['na', 'ca', 'sa', 'af', 'as', 'me', 'ee']
-SEARCH_SORT = ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'amount_remaining', 'repayment_term']
+    @property
+    def lenders(self):
+        return ''
 
+    @property
+    def lending_actions(self):
+        return ''
+
+    @property
+    def loans(self):
+        return ''
+
+    @property
+    def methods(self):
+        return ''
+
+    @property
+    def my(self):
+        return ''
+
+    @property
+    def partners(self):
+        return ''
+
+    @property
+    def teams(self):
+        return ''
+
+    @property
+    def templates(self):
+        return ''
 
 def recent_lending_actions():
     return __make_call('lending_actions/recent.json', 'lending_actions')
@@ -115,110 +135,3 @@ def search_loans(status=None, gender=None, sector=None, region=None, country_cod
     url = 'loans/search.json'
     return __make_call(url, 'loans', search_loans, opts, qopts)
 
-
-def __check_param(value, name, allowed=None, single=False):
-    if not value:
-        return ''
-    bogus = None
-    if isinstance(value, str):
-        if value.lower() not in allowed:
-            print(f'{value.lower()} not in {allowed}')
-            bogus = [value]
-    else:
-        if single:
-            raise Exception(f'{name} must be a single value, not a list')
-        if allowed:
-            bogus = filter(lambda x: x.lower() not in allowed, value)
-        value = ','.join(value)
-
-    if bogus:
-        print(type(value))
-        raise Exception(f'Invalid {name}: {", ".join(bogus)}. Must be one of {", ".join(allowed)}')
-    return value
-
-
-def __make_call(url, key=None, method=None, args=None, params=None):
-    if args is None:
-        args = []
-
-    resp = requests.get(BASE_URL + url, params=params)
-    if resp.status_code != 200:
-        raise requests.HTTPError(f'Non 200 code {resp.status_code} {resp.json()}')
-    raw = resp.json()
-
-    data = key and raw[key] or raw
-    if isinstance(data, list):
-        obj = KivaList()
-        for tmp in data:
-            spam = KivaContainer(tmp)
-            obj.append(spam)
-    else:
-        obj = KivaContainer(data)
-
-    if 'paging' in raw.keys():
-        page = raw['paging']['page']
-        total = raw['paging']['pages']
-        obj.page = page
-        obj.total_pages = total
-        obj.page_size = raw['paging']['page_size']
-        obj.total_count = raw['paging']['total']
-        obj.next_page = page < total and page + 1 or None
-        obj.prev_page = page > 1 and page - 1 or None
-
-        if method:
-            if obj.next_page:
-                if isinstance(args, list):
-                    qargs = args + [obj.next_page]
-                    obj.get_next_page = lambda: method(*qargs)
-                else:
-                    args['page'] = obj.next_page
-                    obj.get_next_page = lambda: method(**args)
-            else:
-                obj.get_next_page = lambda: None
-
-            if obj.prev_page:
-                if isinstance(args, list):
-                    qargs = args + [obj.prev_page]
-                    obj.get_previous_page = lambda: method(*qargs)
-                else:
-                    args['page'] = obj.prev_page
-                    obj.get_previous_page = lambda: method(**args)
-
-            else:
-                obj.get_previous_page = lambda: None
-
-    return obj
-
-
-class KivaContainer(object):
-    def __init__(self, data=None):
-        self.index = 0
-        if data:
-            self.parse(data)
-
-    def parse(self, data):
-        for key in data.keys():
-            value = data[key]
-            if isinstance(value, dict):
-                param = KivaContainer(value)
-            elif RE_DATE.match(key):
-                param = datetime.strptime(value, FORMAT)
-            else:
-                param = value
-            self.__setattr__(key, param)
-
-    def __repr__(self):
-        return str(self.__dict__)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def keys(self):
-        return self.__dict__.keys()
-
-
-class KivaList(list, object):
-    pass
