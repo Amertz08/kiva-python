@@ -6,7 +6,7 @@ from kiva import KivaAPI, KivaList, KivaContainer
 
 @pytest.fixture
 def api():
-    return KivaAPI()
+    return KivaAPI(app_id='com.example')
 
 
 def test_recent_lending_actions(api):
