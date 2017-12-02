@@ -1,9 +1,9 @@
-import urllib2
 import json
-from datetime import datetime
-from urlparse import urljoin
-from urllib import urlencode
 import re
+
+from datetime import datetime
+from urllib.request import urlopen
+from urllib.parse import urlencode, urljoin
 
 __version__ = 0.1
 
@@ -19,12 +19,11 @@ SEARCH_REGION = ['na', 'ca', 'sa', 'af', 'as', 'me', 'ee']
 SEARCH_SORT = ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'amount_remaining', 'repayment_term']
 
 
-def getRecentLendingActions():
-    return __make_call(
-        'lending_actions/recent.json', 'lending_actions')
+def recent_lending_actions():
+    return __make_call('lending_actions/recent.json', 'lending_actions')
 
 
-def getLenderInfo(*lender_ids):
+def lender_info(*lender_ids):
     # need one lender, can have up to 50
     if len(lender_ids) == 0:
         raise Exception('Must have at least 1 lender id')
@@ -36,41 +35,40 @@ def getLenderInfo(*lender_ids):
     return __make_call(f'lenders/{lids}.json', 'lenders')
 
 
-def getLenderLoans(lender_id, page=1):
+def lender_loans(lender_id, page=1):
     return __make_call(f'lenders/{lender_id}/loans.json?page={page}',
                        'loans',
-                       getLenderLoans, [lender_id])
+                       lender_loans, [lender_id])
 
 
-def getNewestLoans(page=1):
-    return __make_call('loans/newest.json?page=%i' % page, 'loans', getNewestLoans)
+def newest_loans(page=1):
+    return __make_call('loans/newest.json?page=%i' % page, 'loans', newest_loans)
 
 
-def getLoans(*loan_ids):
+def loans(*loan_ids):
     if len(loan_ids) == 0 or len(loan_ids) > 10:
         raise Exception('You can request between 1 and 10 loans')
     lids = ','.join(map(lambda x: str(x), loan_ids))
     return __make_call(f'loans/{lids}.json', 'loans')
 
 
-def getLenders(loan_id, page=1):
-    return __make_call(f'loans/{loan_id}/lenders.json?page={page}', 'lenders', getLenders, [loan_id])
+def lenders(loan_id, page=1):
+    return __make_call(f'loans/{loan_id}/lenders.json?page={page}', 'lenders', lenders, [loan_id])
 
 
-def getJournalEntries(loan_id, include_bulk=True, page=1):
+def journal_entries(loan_id, include_bulk=True, page=1):
     ib = include_bulk and 1 or 0
     return __make_call(f'loans/{loan_id}/journal_entries.json?page={page}&include_bulk={ib}',
-                       'journal_entries', getJournalEntries, [loan_id, include_bulk])
+                       'journal_entries', journal_entries, [loan_id, include_bulk])
 
 
-def getEntryComments(entry_id, page=1):
+def entry_comments(entry_id, page=1):
     return __make_call(f'journal_entries/{entry_id}/comments.json?page={page}', 'comments',
-                       getEntryComments, [entry_id])
+                       entry_comments, [entry_id])
 
 
-def searchLoans(status=None, gender=None, sector=None, region=None,
-                country_code=None, partner=None, q=None,
-                sort_by=None, page=1):
+def search_loans(status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
+                 sort_by=None, page=1):
 
     opts = {
         'status': status,
@@ -108,7 +106,7 @@ def searchLoans(status=None, gender=None, sector=None, region=None,
     for k in filter(lambda x: qopts[x] == '', qopts):
         del qopts[k]
     url = 'loans/search.json?' + urlencode(qopts)
-    return __make_call(url, 'loans', searchLoans, opts)
+    return __make_call(url, 'loans', search_loans, opts)
     
 
 def __check_param(value, name, allowed=None, single=False):
@@ -135,7 +133,7 @@ def __check_param(value, name, allowed=None, single=False):
 def __make_call(url, key=None, method=None, args=None):
     if args is None:
         args = []
-    u = urllib2.urlopen(urljoin(BASE_URL, url))
+    u = urlopen(urljoin(BASE_URL, url))
     raw = json.load(u)
     u.close()
 
