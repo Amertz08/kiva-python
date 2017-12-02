@@ -1,6 +1,7 @@
 from .base import BaseAPI
 from .lenders import Lenders
 from .lending_actions import LendingActions
+from .loans import Loans
 
 __version__ = 0.1
 
@@ -9,15 +10,15 @@ class KivaAPI(BaseAPI):
 
     @property
     def lenders(self):
-        return Lenders()
+        return Lenders(self.version)
 
     @property
     def lending_actions(self):
-        return LendingActions()
+        return LendingActions(self.version)
 
     @property
     def loans(self):
-        return ''
+        return Loans(self.version)
 
     @property
     def methods(self):
@@ -39,36 +40,10 @@ class KivaAPI(BaseAPI):
     def templates(self):
         return ''
 
-
-def newest_loans(page=1):
-    return __make_call('loans/newest.json', 'loans', newest_loans, params={'page': page})
-
-
-def loans(loan_ids):
-    if len(loan_ids) == 0 or len(loan_ids) > 10:
-        raise Exception('You can request between 1 and 10 loans')
-    lids = ','.join([str(i) for i in loan_ids])
-
-    return __make_call(f'loans/{lids}.json', 'loans')
-
-
-def lenders(loan_id, page=1):
-    return __make_call(f'loans/{loan_id}/lenders.json', 'lenders', lenders, [loan_id], {'page': page})
-
-
-def journal_entries(loan_id, include_bulk=True, page=1):
-    ib = include_bulk and 1 or 0
-    params = {
-        'page': page,
-        'include_bulk': ib
-    }
-    return __make_call(f'loans/{loan_id}/journal_entries.json',
-                       'journal_entries', journal_entries, [loan_id, include_bulk], params)
-
-
-def entry_comments(entry_id, page=1):
-    return __make_call(f'journal_entries/{entry_id}/comments.json', 'comments',
-                       entry_comments, [entry_id], {'page': page})
+# TODO: cannot find on API docs
+# def entry_comments(entry_id, page=1):
+#     return __make_call(f'journal_entries/{entry_id}/comments.json', 'comments',
+#                        entry_comments, [entry_id], {'page': page})
 
 
 def search_loans(status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
