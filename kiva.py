@@ -1,9 +1,7 @@
-import json
 import re
+import requests
 
 from datetime import datetime
-from urllib.request import urlopen
-from urllib.parse import urlencode, urljoin
 
 __version__ = 0.1
 
@@ -36,9 +34,14 @@ def lender_info(*lender_ids):
 
 
 def lender_loans(lender_id, page=1):
-    return __make_call(f'lenders/{lender_id}/loans.json?page={page}',
-                       'loans',
-                       lender_loans, [lender_id])
+    params = {'page': page}
+    return __make_call(
+        url=f'lenders/{lender_id}/loans.json',
+        key='loans',
+        method=lender_loans,
+        args=[lender_id],
+        params=params
+    )
 
 
 def newest_loans(page=1):
@@ -105,8 +108,8 @@ def search_loans(status=None, gender=None, sector=None, region=None, country_cod
 
     for k in filter(lambda x: qopts[x] == '', qopts):
         del qopts[k]
-    url = 'loans/search.json?' + urlencode(qopts)
-    return __make_call(url, 'loans', search_loans, opts)
+    url = 'loans/search.json'
+    return __make_call(url, 'loans', search_loans, opts, qopts)
     
 
 def __check_param(value, name, allowed=None, single=False):
@@ -130,12 +133,14 @@ def __check_param(value, name, allowed=None, single=False):
     return value
 
 
-def __make_call(url, key=None, method=None, args=None):
+def __make_call(url, key=None, method=None, args=None, params=None):
     if args is None:
         args = []
-    u = urlopen(urljoin(BASE_URL, url))
-    raw = json.load(u)
-    u.close()
+
+    resp = requests.get(BASE_URL + url, params=params)
+    if resp.status_code != 200:
+        raise requests.HTTPError(f'Non 200 code: {resp.status_code}')
+    raw = resp.json()
 
     data = key and raw[key] or raw
     if isinstance(data, list):
