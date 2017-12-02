@@ -1,4 +1,5 @@
 from .base import BaseAPI
+from .lenders import Lenders
 from .lending_actions import LendingActions
 
 __version__ = 0.1
@@ -8,7 +9,7 @@ class KivaAPI(BaseAPI):
 
     @property
     def lenders(self):
-        return ''
+        return Lenders()
 
     @property
     def lending_actions(self):
@@ -37,29 +38,6 @@ class KivaAPI(BaseAPI):
     @property
     def templates(self):
         return ''
-
-
-def lender_info(lender_ids):
-    # need one lender, can have up to 50
-    if len(lender_ids) == 0:
-        raise Exception('Must have at least 1 lender id')
-    elif len(lender_ids) > 50:
-        raise Exception(f'Can have up to 50 lender ids; {len(lender_ids)} submitted')
-
-    lids = ','.join([str(i) for i in lender_ids])
-
-    return __make_call(f'lenders/{lids}.json', 'lenders')
-
-
-def lender_loans(lender_id, page=1):
-    params = {'page': page}
-    return __make_call(
-        url=f'lenders/{lender_id}/loans.json',
-        key='loans',
-        method=lender_loans,
-        args=[lender_id],
-        params=params
-    )
 
 
 def newest_loans(page=1):
