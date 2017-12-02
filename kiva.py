@@ -8,7 +8,7 @@ __version__ = 0.1
 API_VERSION = 1
 
 RE_DATE = re.compile('.*_?date$')
-BASE_URL = 'http://api.kivaws.org/v%i/' % API_VERSION
+BASE_URL = 'https://api.kivaws.org/v%i/' % API_VERSION
 FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 SEARCH_STATUS = ['fundraising', 'funded', 'in_repayment', 'paid', 'defaulted']
@@ -144,7 +144,7 @@ def __make_call(url, key=None, method=None, args=None, params=None):
 
     resp = requests.get(BASE_URL + url, params=params)
     if resp.status_code != 200:
-        raise requests.HTTPError(f'Non 200 code: {resp.status_code}')
+        raise requests.HTTPError(f'Non 200 code {resp.status_code} {resp.json()}')
     raw = resp.json()
 
     data = key and raw[key] or raw
@@ -157,14 +157,14 @@ def __make_call(url, key=None, method=None, args=None, params=None):
         obj = KivaContainer(data)
         
     if 'paging' in raw.keys():
-        current = raw['paging']['page']
+        page = raw['paging']['page']
         total = raw['paging']['pages']
-        obj.current_page = current
+        obj.page = page
         obj.total_pages = total
         obj.page_size = raw['paging']['page_size']
         obj.total_count = raw['paging']['total']
-        obj.next_page = current < total and current + 1 or None
-        obj.prev_page = current > 1 and current - 1 or None
+        obj.next_page = page < total and page + 1 or None
+        obj.prev_page = page > 1 and page - 1 or None
 
         if method:
             if obj.next_page:
