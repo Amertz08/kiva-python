@@ -14,7 +14,7 @@ SEARCH_SORT = ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'a
 
 class BaseAPI(object):
 
-    def __init__(self, app_id=None, version=1):
+    def __init__(self, app_id='', version=1):
         self.app_id = app_id
         self.version = version
         self.base_url = f'https://api.kivaws.org/v{self.version}/'
