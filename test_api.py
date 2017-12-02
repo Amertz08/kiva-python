@@ -13,7 +13,7 @@ def test_loans():
         assert False, 'No loans found'
     else:
         n = 10 if len(loans) > 10 else len(loans)
-        pprint.pprint(loans[:8])
+        pprint.pprint(loans[:n])
         loan_ids = [entry.loan.id for entry in loans[:n]]
         results = kiva.loans(loan_ids)
         assert isinstance(results, kiva.KivaList), f'{type(results)} is not {type(kiva.KivaList)}'
