@@ -1,4 +1,4 @@
-from .base import KivaContainer, KivaList
+from .base import KivaContainer, KivaList, SEARCH_STATUS, SEARCH_GENDER, SEARCH_REGION, SEARCH_SORT
 from .kiva import KivaAPI
 
 __version__ = 0.1
