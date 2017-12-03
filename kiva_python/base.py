@@ -49,7 +49,7 @@ class BaseAPI(object):
         return value
 
     @staticmethod
-    def _process_response(resp, key):
+    def _process_response(resp, key, method, args):
         """
         Processes the response data and returns it
         :param resp:
@@ -119,8 +119,7 @@ class BaseAPI(object):
         if resp.status_code != 200:
             raise requests.HTTPError(f'Non 200 code {resp.status_code} {resp.json()}')
         resp = resp.json()
-        return self._process_response(resp, key)
-
+        return self._process_response(resp, key, method, args)
 
 
 class KivaContainer(object):
