@@ -33,10 +33,9 @@ class Lenders(BaseAPI):
         :param page: page of results
         :returns List of loans lent by given lender
         """
-        params = {'page': page}
         return self._make_call(
             url=f'{lender_id}/loans.json',
-            params=params
+            params={'page': page}
             key='loans',
             method=self.loans,
             args=[lender_id],

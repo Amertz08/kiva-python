@@ -26,13 +26,12 @@ class Loans(BaseAPI):
 
         """
         ib = include_bulk and 1 or 0
-        params = {
-            'page': page,
-            'include_bulk': ib
-        }
         return self._make_call(
             url=f'{loan_id}/journal_entries.json',
-            params=params
+            params={
+                'page': page,
+                'include_bulk': ib
+            }
             key='journal_entries',
             method=self.journal_entries,
             args=[loan_id, include_bulk],
