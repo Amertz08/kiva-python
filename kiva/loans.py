@@ -8,6 +8,11 @@ class Loans(BaseAPI):
         self.base_url += 'loans/'
 
     def __call__(self, loan_ids):
+        """
+        Returns loan data for given loan_ids
+        :param loan_ids: List of loans_ids to get data for
+        :returns List of loan data
+        """
         if len(loan_ids) == 0 or len(loan_ids) > 10:
             raise Exception('You can request between 1 and 10 loans')
         lids = ','.join([str(i) for i in loan_ids])
@@ -17,6 +22,9 @@ class Loans(BaseAPI):
         )
 
     def journal_entries(self, loan_id, include_bulk=True, page=1):
+        """
+
+        """
         ib = include_bulk and 1 or 0
         params = {
             'page': page,
@@ -31,6 +39,12 @@ class Loans(BaseAPI):
         )
 
     def lenders(self, loan_id, page=1):
+        """
+        Returns list of lenders for given loan
+        :param loan_id: id of loan
+        :param page: page number of results
+        :returns list of Lender data
+        """
         return self._make_call(
             url=f'{loan_id}/lenders.json',
             params={'page': page}
@@ -40,6 +54,11 @@ class Loans(BaseAPI):
         )
 
     def newest(self, page=1):
+        """
+        Returns list of newest loan listings
+        :param page: page number of results
+        :returns List of loans
+        """
         return self._make_call(
             url='newest.json',
             key='loans',
@@ -49,6 +68,17 @@ class Loans(BaseAPI):
 
     def search(self, status=None, gender=None, sector=None, region=None, country_code=None, partner=None, q=None,
                sort_by=None, page=1):
+        """
+        Search loans
+        :param status: Loan status ['fundraising', 'funded', 'in_repayment', 'paid', 'defaulted']
+        :param gender: Gender of loan recipient ['male', 'female']
+        :param sector: Market sector of loan
+        :param region: Geogrphic region of loan ['na', 'ca', 'sa', 'af', 'as', 'me', 'ee']
+        :param country_code: Country code of loan
+        :param partner: Partner who helps with loan
+        :param q: TODO: idk
+        :param sort_by: Sort results by ['popularity', 'loan_amount', 'oldest', 'expiration', 'newest', 'amount_remaining', 'repayment_term']
+        """
         opts = {
             'status': status,
             'gender': gender,

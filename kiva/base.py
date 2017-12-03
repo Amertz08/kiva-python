@@ -21,6 +21,14 @@ class BaseAPI(object):
 
     @staticmethod
     def _check_param(value, name, allowed=None, single=False):
+        """
+
+        :param value:
+        :param name:
+        :param allowed:
+        :param single:
+        :return
+        """
         if not value:
             return ''
         bogus = None
@@ -42,6 +50,12 @@ class BaseAPI(object):
 
     @staticmethod
     def _process_response(resp, key):
+        """
+        Processes the response data and returns it
+        :param resp:
+        :param key:
+        :return
+        """
         data = key and resp[key] or resp
         if isinstance(data, list):
             obj = KivaList()
@@ -79,12 +93,19 @@ class BaseAPI(object):
                     else:
                         args['page'] = obj.prev_page
                         obj.get_previous_page = lambda: method(**args)
-
                 else:
                     obj.get_previous_page = lambda: None
         return obj
 
     def _make_call(self, url, params=None, key=None, method=None, args=None):
+        """
+        Makes call to API
+        :param url:
+        :param params:
+        :param key:
+        :param method:
+        :param args;
+        """
         if args is None:
             args = []
 
@@ -109,6 +130,9 @@ class KivaContainer(object):
             self.parse(data)
 
     def parse(self, data):
+        """
+        Parses data into the container
+        """
         for key in data.keys():
             value = data[key]
             if isinstance(value, dict):
