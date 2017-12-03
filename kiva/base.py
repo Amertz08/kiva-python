@@ -22,12 +22,12 @@ class BaseAPI(object):
     @staticmethod
     def _check_param(value, name, allowed=None, single=False):
         """
-
-        :param value:
-        :param name:
-        :param allowed:
-        :param single:
-        :return
+        Validates search parameters
+        :param value: value to check
+        :param name: key name associated with value
+        :param allowed: values allowed (enums)
+        :param single: boolean single value or not
+        :returns value or ''
         """
         if not value:
             return ''
