@@ -97,7 +97,7 @@ class BaseAPI(object):
                     obj.get_previous_page = lambda: None
         return obj
 
-    def _make_call(self, url, paramhttps://twitter.com/AJEnglish/status/936891218629296129s=None, key=None, method=None, args=None):
+    def _make_call(self, url, params=None, key=None, method=None, args=None):
         """
         Makes call to API
         :param url: Endpoint URL to call
