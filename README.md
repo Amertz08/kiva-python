@@ -2,22 +2,22 @@ kiva-python
 ===========
 
 ```Python
-from kiva import KivaAPI
+from kiva_python import KivaAPI
 
-api = KivaAPI('com.example')
+kiva = KivaAPI('com.example')
 
 # loans endpoints
-loans = api.loans([1, 2, 3])
+loans = kiva.loans([1, 2, 3])
 loans.page
 
 next_loans = loans.next_page
 loans = next_loans.prev_page
 
-loan_lenders = api.loans.lenders(123)
+loan_lenders = kiva.loans.lenders(123)
 
-newest_loans = api.loans.newest()
+newest_loans = kiva.loans.newest()
 
 # Lender endpoints
-lenders = api.lenders([1, 2, 3])
-lender_loans = api.lenders.loans(1)
+lenders = kiva.lenders([1, 2, 3])
+lender_loans = kiva.lenders.loans(1)
 ```
