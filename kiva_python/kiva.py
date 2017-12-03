@@ -3,6 +3,7 @@ from .lenders import Lenders
 from .lending_actions import LendingActions
 from .loans import Loans
 
+
 class KivaAPI(BaseAPI):
 
     @property

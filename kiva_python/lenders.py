@@ -21,7 +21,7 @@ class Lenders(BaseAPI):
 
         lids = ','.join([str(i) for i in lender_ids])
 
-        return self._make_call(
+        return self._call(
             url=f'{lids}.json',
             key='lenders'
         )
@@ -33,9 +33,9 @@ class Lenders(BaseAPI):
         :param page: page of results
         :returns List of loans lent by given lender
         """
-        return self._make_call(
+        return self._call(
             url=f'{lender_id}/loans.json',
-            params={'page': page}
+            params={'page': page},
             key='loans',
             method=self.loans,
             args=[lender_id],

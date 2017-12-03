@@ -16,7 +16,7 @@ class Loans(BaseAPI):
         if len(loan_ids) == 0 or len(loan_ids) > 10:
             raise Exception('You can request between 1 and 10 loans')
         lids = ','.join([str(i) for i in loan_ids])
-        return self._make_call(
+        return self._call(
             url=f'{lids}.json',
             key='loans'
         )
@@ -26,12 +26,12 @@ class Loans(BaseAPI):
 
         """
         ib = include_bulk and 1 or 0
-        return self._make_call(
+        return self._call(
             url=f'{loan_id}/journal_entries.json',
             params={
                 'page': page,
                 'include_bulk': ib
-            }
+            },
             key='journal_entries',
             method=self.journal_entries,
             args=[loan_id, include_bulk],
@@ -44,9 +44,9 @@ class Loans(BaseAPI):
         :param page: page number of results
         :returns list of Lender data
         """
-        return self._make_call(
+        return self._call(
             url=f'{loan_id}/lenders.json',
-            params={'page': page}
+            params={'page': page},
             key='lenders',
             method=self.lenders,
             args=[loan_id],
@@ -58,7 +58,7 @@ class Loans(BaseAPI):
         :param page: page number of results
         :returns List of loans
         """
-        return self._make_call(
+        return self._call(
             url='newest.json',
             key='loans',
             method=self.newest,
@@ -113,9 +113,9 @@ class Loans(BaseAPI):
 
         for k in filter(lambda x: qopts[x] == '', qopts):
             del qopts[k]
-        return self._make_call(
+        return self._call(
             url='search.json',
-            params=qopts
+            params=qopts,
             key='loans',
             method=self.search,
             args=opts,
