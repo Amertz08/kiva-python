@@ -22,26 +22,25 @@ class KivaAPI(BaseAPI):
 
     @property
     def methods(self):
-        return ''
+        raise NotImplementedError('KivaAPI.methods not implemented')
 
     @property
     def my(self):
-        return ''
+        raise NotImplementedError('KivaAPI.my not implemented')
 
     @property
     def partners(self):
-        return ''
+        raise NotImplementedError('KivaAPI.partners not implemented')
 
     @property
     def teams(self):
-        return ''
+        raise NotImplementedError('KivaAPI.teams not implemented')
 
     @property
     def templates(self):
-        return ''
+        raise NotImplementedError('KivaAPI.templates not implemented')
 
 # TODO: cannot find on API docs
 # def entry_comments(entry_id, page=1):
 #     return __make_call(f'journal_entries/{entry_id}/comments.json', 'comments',
 #                        entry_comments, [entry_id], {'page': page})
-
